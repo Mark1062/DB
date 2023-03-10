@@ -1,0 +1,494 @@
+
+
+
+
+import org.dreambot.api.input.Mouse;
+import org.dreambot.api.methods.Calculations;
+import org.dreambot.api.methods.container.impl.Inventory;
+import org.dreambot.api.methods.container.impl.bank.Bank;
+import org.dreambot.api.methods.container.impl.equipment.Equipment;
+import org.dreambot.api.methods.container.impl.equipment.EquipmentSlot;
+import org.dreambot.api.methods.input.Camera;
+import org.dreambot.api.methods.interactive.GameObjects;
+import org.dreambot.api.methods.interactive.NPCs;
+import org.dreambot.api.methods.interactive.Players;
+import org.dreambot.api.methods.map.Area;
+import org.dreambot.api.methods.skills.Skill;
+import org.dreambot.api.methods.skills.SkillTracker;
+import org.dreambot.api.methods.skills.Skills;
+import org.dreambot.api.methods.tabs.Tab;
+import org.dreambot.api.methods.tabs.Tabs;
+import org.dreambot.api.methods.walking.impl.Walking;
+import org.dreambot.api.randoms.RandomEvent;
+import org.dreambot.api.script.AbstractScript;
+import org.dreambot.api.script.Category;
+import org.dreambot.api.script.ScriptManifest;
+import org.dreambot.api.utilities.Logger;
+import org.dreambot.api.utilities.Sleep;
+
+
+@ScriptManifest(name = "Nature Rune CRASH",
+description = "Craft Nature trought the abyss",
+author = "Keep simple", version = 1.0,
+category = Category.RUNECRAFTING, image = "https://i.imgur.com/wtdXR1d.png")
+public class NatureCrafter extends AbstractScript{
+
+int state;
+int Natures = 0;
+int GloryDescarregado = 1704;
+int GloryCarregado = 11978;
+int Tuna = 361;
+int staminaPot1 = 12631;
+int SmallPouch = 5509;
+int PureEssence = 7936;
+Area RiftPosition = new Area (3035,4842,3039,4844); 
+Area Tile1 = new Area(3104,3503,3101,3506);
+Area Tile2 = new Area(3102,3510,3101,3510);
+Area Tile3I = new Area(3105,3518,3099,3519);
+Area Tile4 = new Area(3112,3536,3106,3542);
+Area Tile5 = new Area(3103,3554,3107,3556);
+Area Tile6 = new Area(3105,3559,3107,3560);
+
+
+
+
+int Altar = 34768;
+int NatureRift = 24975;
+
+	public void onStart() {
+		SkillTracker.start(Skill.RUNECRAFTING);
+		state = 0;
+	}
+	
+
+	
+
+	
+	public int onLoop() {
+		
+		
+		
+		
+		if (state == 0) {
+			WalkToMageOfZamorak();
+			
+			
+		}
+		else if (state == 1) {
+			WalkToRift();
+			
+		}
+		else if (state == 2) {
+			TeleportToAbyss();
+		}
+		
+		
+		else if (state == 3) {
+			craftar();
+			
+		}
+		else if (state == 4) {
+			if (Calculations.random(0, 50) == 15) {
+				Mouse.moveOutsideScreen(true);
+				Sleep.sleep(900,6300);
+				
+			}
+			bancar();
+			
+		}
+		else if (state ==5) {
+			if (Calculations.random(0, 40) == 15) {
+				Mouse.moveOutsideScreen(true);
+				Sleep.sleep(900,6300);
+				
+			}
+			EnterRift();
+		}
+		return 0;
+	}
+	
+	public void WalkToMageOfZamorak() {
+//		Area WildernessDitch = new Area(3102,3517,3110,3520);
+//		Walking.walk(WildernessDitch);
+//		Sleep.sleepUntil(() -> WildernessDitch.contains(Players.getLocal()), 1000,1500);
+		
+		Walking.walk(Tile1);
+		Mouse.moveOutsideScreen(true);
+		Sleep.sleep(3532,4953);
+		Walking.walk(Tile2);
+		Sleep.sleep(3687,3900);
+		Walking.walk(Tile3I);
+		Mouse.moveOutsideScreen(true);
+		doOnLoopCamera();
+		Sleep.sleep(500,1340);
+		if (GameObjects.closest(23271).distance() <= 5) {
+			GameObjects.closest(23271).interact();
+			Sleep.sleep(700,999);
+		state =2;
+		}
+	}
+	
+		public void TeleportToAbyss() {
+			
+		
+
+
+		Sleep.sleep(2500,3000);	
+		Walking.walk(Tile4);
+		Sleep.sleep(4300,4978);
+		Walking.walk(Tile5);
+		Sleep.sleep(3000,3656);
+		Walking.walk(Tile6);
+		Sleep.sleep(2343,2565);
+			
+		if (NPCs.closest(3228).interact("Teleport") ) {
+
+		state = 1;
+		}
+	}
+	
+	public void WalkToRift() {
+		doOnLoopCamera();
+		Area RiftPositionArea = new Area(3035,4842,3030,4842);
+		Walking.walk(RiftPositionArea);
+		Sleep.sleepUntil(() -> RiftPositionArea.contains(Players.getLocal()), 1000,2000);
+		
+		if (GameObjects.closest(24975).distance() <= 4) {
+			
+			while(Inventory.contains(5515)) { // degraded pouch
+				NPCs.closest("Dark mage").interact("Repairs");
+				Sleep.sleep(2000,2987);
+			}
+		
+		state =5;
+		}
+		
+		
+		
+	}
+	
+	public void EnterRift() {
+		while(GameObjects.closest(Altar) == null) {
+		GameObjects.closest(24975).interact();
+		Sleep.sleep(1500,2500);
+		}
+		if(GameObjects.closest(Altar).isOnScreen()) {
+		state =3;
+		}
+	}
+	
+	
+	public void craftar() {
+
+
+		Logger.log("crafting....");
+		if (GameObjects.closest(Altar).interact()) {
+		Sleep.sleep(2600,3200);                               // <----  SE PRECISAR AUMENTAR A VELOCIDADE DE EMPYTAR AS POUCHES
+		Inventory.get(5510).interact("Empty");
+		Sleep.sleep(200,500);
+		Inventory.get(5512).interact("Empty");
+		Sleep.sleep(332,521);
+		GameObjects.closest(Altar).interact();
+		Sleep.sleep(432,521);
+		Inventory.get(5514).interact("Empty");
+		
+		}
+		if (GameObjects.closest(Altar).interact()) {
+			Sleep.sleep(1000,2500);
+			Equipment.interact(EquipmentSlot.AMULET,"Edgeville");
+			Sleep.sleep(3000,3500);
+			state = 4;
+		}
+	}
+	
+
+	public void bancar() {
+		Logger.log("Indo bancar");
+		Bank.open();
+		Natures += Inventory.count("Nature rune");
+		int value = Natures * 118;
+		Bank.depositAll("Nature rune");
+		Logger.log("You made and banked: "+Natures);
+		Logger.log("Approx cash: "+value);
+		Logger.log("EXP per hour: " + SkillTracker.getGainedExperiencePerHour(Skill.RUNECRAFTING));
+		if (Inventory.contains(GloryDescarregado)) {
+			Bank.deposit(GloryDescarregado);
+			Sleep.sleep(330,620);
+		}
+		if (Inventory.contains(Tuna)) {
+			Inventory.get(Tuna).interact("Eat");
+			Sleep.sleep(400,712);
+		}
+		
+		
+		if(Skills.getBoostedLevel(Skill.HITPOINTS) <= 75) {
+			Logger.log("Hp below 75, eating 2 tunas");
+			Bank.withdraw(Tuna, 2);
+			Sleep.sleep(1000,1232);
+			while(Inventory.contains(Tuna)) { 
+			Inventory.get(Tuna).interact("Eat");
+			Sleep.sleep(600,1200);
+			
+			}
+		}
+		
+		if (Walking.getRunEnergy() <= 50) {
+			Logger.log("Energy below 50, drinking stamina(1)");
+			Bank.withdraw(staminaPot1);
+			Sleep.sleep(1200,1545);
+			Inventory.get(staminaPot1).interact("Drink");
+			Sleep.sleep(1300,1409);
+			while (Inventory.contains(229)) {
+				Bank.deposit(229);
+				Sleep.sleep(200,300);
+			}
+			
+		}
+		if(Equipment.contains(GloryDescarregado)) {
+			Logger.log("Your glory is useless for now, getting a '6'one");
+			Bank.withdraw(GloryCarregado);
+			Sleep.sleep(1200,1505);
+			Inventory.get(GloryCarregado).interact("Wear");
+			Sleep.sleep(1000,1100);
+			Bank.deposit(GloryDescarregado);
+			Sleep.sleep(300,600);
+		}
+		
+		
+		Bank.withdrawAll(PureEssence);
+		Logger.log("Filling pouches...");
+		Inventory.get(5510).interact("Fill");
+		Sleep.sleep(597,994);
+		Inventory.get(5512).interact("Fill");
+		Bank.withdrawAll(PureEssence);
+		Sleep.sleep(697,894);
+		Inventory.get(5514).interact("Fill");
+		Bank.withdrawAll(PureEssence);
+		Sleep.sleep(697,894);
+		if (Inventory.contains(Tuna)) {
+			Inventory.get(Tuna).interact("Eat");
+		}
+		if (Inventory.contains(staminaPot1)) {
+			Inventory.get(staminaPot1).interact("Drink");
+		}
+		if (Inventory.contains(GloryDescarregado)) {
+			Bank.deposit(GloryDescarregado);
+		}
+		Bank.withdrawAll(PureEssence);
+		Logger.log("Executing random anti-ban...");
+		Bank.close();
+		doOnLoop();
+		Logger.log("Going to craft...");
+		state = 0;
+		
+		
+		
+	}
+	
+	
+	
+	// Camera move Anti-Ban Code 
+	public int doOnLoopCamera() {
+		Logger.log("Executing anti-ban Camera");
+		//		Getting camera setting
+		//--------------------------------
+		int CameraZoom = Camera.getZoom();
+		int CameraPitch = Camera.getPitch();
+		int CameraYaw = Camera.getYaw();
+		
+				// Setting camera and Max to random
+		//-------------------------------------------
+		int ZoomMin = 181;
+		int ZoomMax = 516;
+		
+		int PitchMin = 128;
+		int PitchMax = 252;
+		
+		int yawMin = 56;
+		int yawMax = 1820;
+				
+		
+				// Zoom
+		
+		if (ZoomMin != Camera.getZoom()) {
+			CameraZoom = Calculations.random(ZoomMin,ZoomMax);
+			int finalCameraZoom = CameraZoom;
+			Sleep.sleepUntil(() -> Camera.setZoom(finalCameraZoom), 2000);	
+		}
+		
+		// Pitch
+		
+		if (CameraPitch < PitchMin || CameraPitch > PitchMax) {
+			CameraPitch = Calculations.random(PitchMin,PitchMax);
+		}
+		// Yawww
+		
+		if (yawMax != yawMin) {
+            if (CameraYaw > yawMin || CameraYaw < yawMax) {
+            } else {
+                int random = Calculations.random(0, 2);
+                if (random == 0) {
+                    CameraYaw = Calculations.random(0, yawMax);
+                } else {
+                    CameraYaw = Calculations.random(yawMin, 2048);
+                }
+            }
+        } else {
+            if (CameraYaw < yawMin || CameraYaw > yawMax) {
+                CameraYaw = Calculations.random(yawMin, yawMax);
+            }
+        }
+		
+		// Move Camera
+		
+		
+		Camera.firePitchAndYawEvent(CameraPitch, CameraYaw);
+		int finalCameraYaw = CameraYaw;
+		int finalCameraPitch = CameraPitch;
+		
+		Sleep.sleepUntil(() -> Camera.rotateTo(finalCameraYaw, finalCameraPitch), 2000);
+        
+		
+        return (int) Calculations.nextGaussianRandom(400, 100);
+        
+        
+	}
+	// Finished Anti-Ban Camera Event
+	
+	
+	// Pausa com deslogar
+	private void takeBreak() {
+		Logger.log("Executing anti-ban Take a break");
+		this.getRandomManager().disableSolver(RandomEvent.LOGIN);
+		Tabs.logout();
+		Mouse.moveOutsideScreen(true);
+		Sleep.sleep(20*60*1000, 24*60*1000);
+		this.getRandomManager().enableSolver(RandomEvent.LOGIN);
+	}
+	//Outros Anti-bans
+	private static void checkStats() {
+		Logger.log("Executando anti-ban de chechar os status");
+		Skills.open();
+		Sleep.sleep(300, 2 * 1000);
+		Skills.hoverSkill(Skill.RUNECRAFTING);
+		Sleep.sleep(455, 2 * 1300);
+		Tabs.open(Tab.INVENTORY);
+	}
+	private static void SwingBetweenTabs() {
+		Logger.log("Executando anti-ban Swing Between Tabs");
+		Tabs.open(Tab.PRAYER);
+		Sleep.sleep(1500,2333);
+		Tabs.openWithFKey(Tab.MUSIC);
+		Mouse.moveOutsideScreen(true);
+		Sleep.sleep(1000,3500);
+		Tabs.open(Tab.EMOTES);
+		Sleep.sleep(200, 4000);
+		Tabs.open(Tab.INVENTORY);
+		
+	}
+	private static void SwingBetweenTabs2() {
+		Logger.log("Executing anti-ban Swing Between Tabs2");
+		Tabs.open(Tab.CLAN);
+		Sleep.sleep(1900,2773);
+		Tabs.openWithFKey(Tab.FRIENDS);
+		Sleep.sleep(2000,3599);
+		Tabs.open(Tab.SKILLS);
+		Sleep.sleep(200, 4000);
+		Tabs.open(Tab.INVENTORY);
+		
+	}
+	
+	private static void SwingBetweenTabs3() {
+		Logger.log("Executing anti-ban Swing Between Tabs2");
+		Tabs.open(Tab.MAGIC);
+		Sleep.sleep(1500,2333);
+		Tabs.openWithFKey(Tab.EQUIPMENT);
+		Sleep.sleep(1000,3500);
+		Tabs.open(Tab.SKILLS);
+		Skills.hoverSkill(Skill.RUNECRAFTING);
+		Sleep.sleep(2000, 8000);
+		Tabs.open(Tab.INVENTORY);
+		
+	}
+	private static void AFK() {
+		Logger.log("Executing anti-ban AFK");
+		Mouse.moveOutsideScreen(true);
+		Sleep.sleep(6000,12000);
+	}
+	private static void LongerAFK() {
+		Logger.log("Executing anti-ban Longer AFK");
+		Mouse.moveOutsideScreen(true);
+		Sleep.sleep(40000,120000);
+	}
+
+	// Anti-Ban (SWITCH) ESCOLHER ANTI-BAN ALEATORIAMENTE
+	public int doOnLoop() {
+		
+		switch(Calculations.random(0, 18)) {
+		case 0:
+			doOnLoopCamera();
+		break;
+		case 1:
+			doOnLoopCamera();
+			break;
+		case 2:
+			doOnLoopCamera();
+			break;
+		case 3:
+			doOnLoopCamera();
+			break;
+		case 4:
+			checkStats();
+			break;
+		case 5:
+			doOnLoopCamera();
+			break;
+		case 6:
+			doOnLoopCamera();
+			break;
+		case 7:
+			doOnLoopCamera();
+			break;
+		case 8:
+			doOnLoopCamera();
+			break;
+		case 9:
+			SwingBetweenTabs3();
+			break;
+		case 10:
+			SwingBetweenTabs2();
+			break;
+		case 11:
+			SwingBetweenTabs();
+			break;
+		case 12:
+			AFK();
+			break;
+		case 13:
+			doOnLoopCamera();
+			break;
+		case 14:
+			doOnLoopCamera();
+			break;
+		case 15:
+			doOnLoopCamera();
+			break;
+		case 16:
+			LongerAFK();
+			break;
+		case 17:
+			if (Calculations.random(0, 15) == 1) {
+                takeBreak();
+            }
+			break;
+		default:
+		break;
+			
+		
+		}
+		return Calculations.random(500, 1000);
+	}
+}
+
+
+
